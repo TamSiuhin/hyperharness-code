@@ -351,8 +351,19 @@ def test_registered_memorycd_installs_transport_without_keepalive(tmp_path):
     assert seen[0]['retries'] == 0
 
 
+def test_missing_failover_hosts_leaves_study_root_available(tmp_path, monkeypatch):
+    monkeypatch.delenv('HYPERHARNESS_AZURE_FAILOVER_HOSTS', raising=False)
+    root = tmp_path / 'study'
+    credentials = tmp_path / 'outside-registration.env'
+    with pytest.raises(ValueError, match='HYPERHARNESS_AZURE_FAILOVER_HOSTS'):
+        pipeline.prepare(root, datasets=['pm3'], failover_credentials=credentials)
+    assert not root.exists()
+
+
 @pytest.mark.parametrize('dataset', list(pipeline.REFERENCES))
-def test_fresh_failover_registration_freezes_model_and_concurrency(tmp_path, dataset):
+def test_fresh_failover_registration_freezes_model_and_concurrency(tmp_path, dataset, monkeypatch):
+    hosts = [f'test-{name}.openai.azure.com' for name in ('one', 'two', 'three')]
+    monkeypatch.setenv('HYPERHARNESS_AZURE_FAILOVER_HOSTS', ','.join(hosts))
     source = reference(tmp_path, dataset)
     host = source / 'train/pm3_generator_harness.py'
     loader = '''
@@ -378,6 +389,7 @@ def load_generator_credentials(plan):
     assert plan['phg']['generator']['transport_retries'] == 0
     assert plan['phg']['generator']['request_timeout_seconds'] == 930
     assert plan['phg']['luna_workers'] == plan['concurrency']['generation'] == 1
+    assert plan['endpoint_failover']['endpoints'] == hosts
     assert plan['endpoint_failover']['max_endpoint_attempts'] == 6
     assert len(plan['endpoint_failover']['patches']) == 4
     assert plan['optimizer']['credential_file'] == str(credential)

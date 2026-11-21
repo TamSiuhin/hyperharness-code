@@ -21,12 +21,11 @@ downloads all registered categories. Retain the source files and frozen run
 registrations on durable storage. Do not copy active databases mid-write.
 
 ```bash
-git clone -b main https://github.com/TamSiuhin/personalized_harness.git
-cd personalized_harness
+git clone -b main https://github.com/TamSiuhin/hyperharness-code.git
+cd hyperharness-code
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[memorycd,eval,luna,dev]'
-python -m pip install psutil
 export LOCAL="$HOME/hyperharness-paper"
 mkdir -p "$LOCAL/raw"
 export PYTHONPATH="$PWD/src"
@@ -113,3 +112,20 @@ requires a complete selected TRAIN panel. Inspect `train/selection.json` and the
 TRAIN and TEST `summary.json` files in the new run. These are fresh results, not
 cached paper scores. Provider sampling, deployment revisions, and the public
 direct transport (instead of the historical failover gateway) can change them.
+
+### Optional Azure failover gateway
+
+For a reference run using `--failover-credentials`, set
+`HYPERHARNESS_AZURE_FAILOVER_HOSTS` in both the registration shell and the
+gateway shell. List your three Azure OpenAI resource hostnames in failover
+order, separated by commas. For example:
+
+```bash
+export HYPERHARNESS_AZURE_FAILOVER_HOSTS="primary-example.openai.azure.com,secondary-example.openai.azure.com,backup-example.openai.azure.com"
+```
+
+Pass the loopback client's credential file to `--failover-credentials`.
+Pass the separate, owner-only upstream JSON file to
+`scripts/azure_endpoint_failover.py --config`. Its `endpoints` array must use
+the same order. The standard `--provider azure` workflow uses the single
+`AZURE_OPENAI_ENDPOINT` from the README.

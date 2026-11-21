@@ -12,7 +12,7 @@ MODEL = 'gpt-5.6-luna'
 def load_credentials(path=None):
     import shlex
     path = Path(path or os.environ.get('HYPERHARNESS_EXECUTOR_CREDENTIALS',
-                                      '/root/.config/personalized_harness/azure.env'))
+                                      Path.home() / '.config/personalized_harness/azure.env')).expanduser()
     for line in path.read_text().splitlines():
         parts = shlex.split(line, comments=True)
         if parts and parts[0] == 'export':

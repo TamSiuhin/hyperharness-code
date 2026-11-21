@@ -736,6 +736,8 @@ def register_train(root, dataset, reference=None, *, variant='task-aware',
         raise ValueError('Unknown evidence variant')
     if variant == 'simple-init' and dataset != 'memorycd':
         raise ValueError('Simple initialization is registered for MemoryCD only')
+    if failover_credentials is not None:
+        failover.configured_hosts()
     reference = Path(reference or REFERENCES[dataset]).resolve()
     source, old_test = reference / "train", reference / "test"
     out = root / dataset / "train"
@@ -852,6 +854,8 @@ def prepare(root, *, variant='task-aware', datasets=None,
         raise ValueError('Select at least one registered dataset')
     if root.exists():
         raise ValueError("Use a fresh study root")
+    if failover_credentials is not None:
+        failover.configured_hosts()
     root.mkdir(parents=True)
     code = root / "code/scripts"
     code.mkdir(parents=True)
@@ -1091,7 +1095,8 @@ def main():
     parser.add_argument('--datasets', nargs='+', choices=list(REFERENCES),
                         help='Restrict prepare to these datasets (default: all)')
     parser.add_argument('--failover-credentials', type=Path,
-                        help='Private credential file for the registered loopback endpoint gateway')
+                        help='Private credential file for the loopback gateway. Set HYPERHARNESS_AZURE_FAILOVER_HOSTS '
+                             'to its three authorized Azure OpenAI hostnames in failover order.')
     parser.add_argument('--generation-workers', type=int,
                         help='Freeze per-dataset generation concurrency for TRAIN and TEST')
     parser.add_argument('--executor-profile', choices=[executor_profile.PROFILE, executor_profile.LUNA_PROFILE],

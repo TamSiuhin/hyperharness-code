@@ -17,17 +17,22 @@ from urllib.parse import urlsplit
 import httpx
 
 
-HOSTS = (
-    'roar-dev-swedencentral.openai.azure.com',
-    'roar-dev-northcentralus.openai.azure.com',
-    'oar-oai-eastus2.openai.azure.com',
-)
+HOSTS_ENV = 'HYPERHARNESS_AZURE_FAILOVER_HOSTS'
 MODEL = 'gpt-6-sol'
 RETRY_STATUSES = {408, 429, 500, 502, 503, 504}
 GATEWAY_URL = 'http://127.0.0.1:8769'
 
 
+def configured_hosts():
+    hosts = tuple(host.strip().lower() for host in os.environ.get(HOSTS_ENV, '').split(','))
+    resource = r'[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.openai\.azure\.com'
+    if len(hosts) != 3 or len(set(hosts)) != 3 or not all(re.fullmatch(resource, host) for host in hosts):
+        raise ValueError(f'Set {HOSTS_ENV} to three distinct, comma-separated Azure OpenAI hostnames in failover order')
+    return hosts
+
+
 def install_transport(out, plan, credential_file):
+    hosts = configured_hosts()
     paths = ('pm3_generator_harness.py', 'pm3_mechanism_experience.py',
         'source_snapshot/src/ohpu/llm.py', 'source_snapshot/src/ohpu/per_user_adaptation/phase_a.py')
     patches = []
@@ -68,7 +73,7 @@ def install_transport(out, plan, credential_file):
     plan['phg']['generator'].update(transport_retries=0, request_timeout_seconds=930,
         connection_keepalive=False, fresh_client_on_retry=False,
         retries='Gateway retries up to six endpoint attempts within a 900s scheduling budget; no outer retries')
-    plan['endpoint_failover'] = {'url': GATEWAY_URL, 'endpoints': list(HOSTS), 'patches': patches,
+    plan['endpoint_failover'] = {'url': GATEWAY_URL, 'endpoints': list(hosts), 'patches': patches,
         'max_endpoint_attempts': 6, 'request_budget_seconds': 900,
         'upstream_timeout_seconds': 300, 'cooldown_seconds': 60,
         'partial_stream_replay': False, 'buffer_until_response_completed': True}
@@ -78,7 +83,8 @@ def install_transport(out, plan, credential_file):
 class EndpointPool:
     def __init__(self, endpoints, token, log, *, timeout=300, cooldown=60, client=None,
                  max_attempts=6, request_budget=900, clock=time.monotonic, wait=None, enabled_endpoints=None):
-        if len(endpoints) != 3 or tuple(urlsplit(row['url']).hostname for row in endpoints) != HOSTS:
+        self.hosts = configured_hosts()
+        if tuple(urlsplit(row['url']).hostname for row in endpoints) != self.hosts:
             raise ValueError('Exactly the three authorized endpoints are required in registered order')
         for endpoint in endpoints:
             parsed = urlsplit(endpoint['url'])
@@ -93,10 +99,10 @@ class EndpointPool:
         self.log.parent.mkdir(parents=True, exist_ok=True)
         self.lock = threading.Lock()
         self.preferred = 0
-        enabled = set(HOSTS if enabled_endpoints is None else enabled_endpoints)
-        if not enabled or not enabled <= set(HOSTS):
+        enabled = set(self.hosts if enabled_endpoints is None else enabled_endpoints)
+        if not enabled or not enabled <= set(self.hosts):
             raise ValueError('Enabled endpoints must be a nonempty subset of authorized hosts')
-        self.disabled = {index for index, host in enumerate(HOSTS) if host not in enabled}
+        self.disabled = {index for index, host in enumerate(self.hosts) if host not in enabled}
         self.blocked_until = [0.0] * len(endpoints)
         self.cooldown = cooldown
         self.max_attempts = max_attempts
@@ -252,7 +258,7 @@ class Handler(BaseHTTPRequestHandler):
             endpoint = pool.endpoints[index]
             started = time.monotonic()
             sent = False
-            details = {'call_id': call_id, 'attempt': attempt, 'endpoint': HOSTS[index],
+            details = {'call_id': call_id, 'attempt': attempt, 'endpoint': pool.hosts[index],
                 'model': MODEL, 'path': path.path, 'stream': bool(payload.get('stream'))}
             try:
                 with pool.client.stream('POST', endpoint['url'].rstrip('/') + self.path,

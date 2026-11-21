@@ -5,8 +5,32 @@ from http.server import ThreadingHTTPServer
 import httpx
 import pytest
 
-from scripts.azure_endpoint_failover import EndpointPool, Handler, HOSTS, MODEL
-from scripts.azure_endpoint_failover import completed_body, error_metadata
+from scripts.azure_endpoint_failover import EndpointPool, Handler, HOSTS_ENV, MODEL
+from scripts.azure_endpoint_failover import completed_body, configured_hosts, error_metadata
+
+
+HOSTS = tuple(f'test-{name}.openai.azure.com' for name in ('one', 'two', 'three'))
+
+
+@pytest.fixture(autouse=True)
+def configure_failover(monkeypatch):
+    monkeypatch.setenv(HOSTS_ENV, ','.join(HOSTS))
+
+
+@pytest.mark.parametrize('hosts', [
+    None,
+    [HOSTS[0], HOSTS[1]],
+    [HOSTS[0], HOSTS[1], HOSTS[0]],
+    [HOSTS[0], HOSTS[1], 'https://' + HOSTS[2]],
+    [HOSTS[0], HOSTS[1], HOSTS[2] + '.example.org'],
+])
+def test_requires_explicit_distinct_azure_hostnames(monkeypatch, hosts):
+    if hosts is None:
+        monkeypatch.delenv(HOSTS_ENV)
+    else:
+        monkeypatch.setenv(HOSTS_ENV, ','.join(hosts))
+    with pytest.raises(ValueError, match=HOSTS_ENV):
+        configured_hosts()
 
 
 @pytest.mark.parametrize('failure', ['timeout', 'rate_limit', 'server', 'deployment', 'bad_request'])
@@ -63,6 +87,13 @@ def test_pool_skips_failed_endpoints_and_rejects_unregistered_hosts(tmp_path):
         assert pool.order() == []
         with pytest.raises(ValueError):
             EndpointPool([{'url': 'http://localhost', 'key': 'secret'}] * 3, 'x' * 40, tmp_path / 'bad')
+        with pytest.raises(ValueError, match='registered order'):
+            EndpointPool(list(reversed(endpoints)), 'x' * 40, tmp_path / 'bad')
+        with pytest.raises(ValueError, match='registered order'):
+            EndpointPool([*endpoints[:2], {'url': 'https://other.openai.azure.com', 'key': 'secret'}],
+                         'x' * 40, tmp_path / 'bad')
+        with pytest.raises(ValueError, match='nonempty subset'):
+            EndpointPool(endpoints, 'x' * 40, tmp_path / 'bad', enabled_endpoints=['other.openai.azure.com'])
     finally:
         pool.client.close()
 

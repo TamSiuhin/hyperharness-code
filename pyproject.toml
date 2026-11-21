@@ -22,6 +22,7 @@ luna = ["tiktoken>=0.8,<1"]
 memorycd = [
   "duckdb>=1.4,<2",
   "numpy>=1.26,<3",
+  "psutil>=5.9",
   "transformers>=4.51,<6",
   "rouge-score==0.1.2",
   "nltk>=3.9,<4",
@@ -37,9 +38,3 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "ohpu.experiments" = ["skills/history-to-harness/SKILL.md"]
-"ohpu.per_user_adaptation" = [
-  "configs/harness_codex/AGENTS.override.md",
-  "configs/harness_codex/policy.json",
-  "configs/harness_codex/.memoharness/memory.md",
-  "configs/harness_codex/.memoharness/playbook.md",
-]

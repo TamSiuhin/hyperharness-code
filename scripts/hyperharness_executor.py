@@ -2,6 +2,7 @@
 import ast
 import hashlib
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -64,7 +65,9 @@ def install_luna(out, dataset, plan, *, model=None):
         'input_budget_validation': 'o200k_base chat estimate plus provider-reported usage guard',
         'patches': patches}
     if not direct_provider:
-        plan['executor_experiment']['credential_file'] = '/root/.config/personalized_harness/azure.env'
+        credentials = os.environ.get('HYPERHARNESS_EXECUTOR_CREDENTIALS',
+                                     Path.home() / '.config/personalized_harness/azure.env')
+        plan['executor_experiment']['credential_file'] = str(Path(credentials).expanduser().resolve())
     return plan['executor_experiment']
 
 

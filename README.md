@@ -48,8 +48,8 @@ npm installed, you can install Codex with the first command below.
 npm install -g @openai/codex@latest
 codex --version
 
-git clone https://github.com/TamSiuhin/personalized_harness.git
-cd personalized_harness
+git clone https://github.com/TamSiuhin/hyperharness-code.git
+cd hyperharness-code
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[memorycd,eval,dev,luna]'

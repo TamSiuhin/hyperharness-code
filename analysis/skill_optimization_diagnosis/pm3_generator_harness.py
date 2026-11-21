@@ -59,7 +59,8 @@ BASELINE_GROUPS = {"pure_bm25": ["bm25_10"], "no_bank_harness": ["no_bank"],
     "non_personalized": ["no_history"]}
 PREFIX = "@@PHG "
 COPY_CHARS = 80
-GENERATOR = {"model": "gpt-6-sol", "credential_file": "/root/.config/personalized_harness/sol-swedencentral.env",
+GENERATOR = {"model": "gpt-6-sol", "credential_file": str(Path(os.environ.get("HYPERHARNESS_SOL_ENV",
+    Path.home() / ".config/personalized_harness/sol-swedencentral.env")).expanduser().resolve()),
     "api_version": "2024-12-01-preview", "efforts": ["none", "low"], "default_effort": "low",
     "request_timeout_seconds": 600, "transport_retries": 3,
     "retries": "up to three retries for timeout/connection/rate-limit/server errors; all attempts retained",

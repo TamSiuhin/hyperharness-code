@@ -102,7 +102,9 @@ def test_explicit_hosted_executor_uses_registered_model(monkeypatch, provider, m
 
 @pytest.mark.parametrize('dataset', ['pm3', 'mempal', 'memorycd'])
 @pytest.mark.parametrize('model', [None, 'paper-answer-deployment'])
-def test_luna_installation_patches_owned_client_only(tmp_path, dataset, model):
+def test_luna_installation_patches_owned_client_only(tmp_path, dataset, model, monkeypatch):
+    credential_path = tmp_path / 'executor.env'
+    monkeypatch.setenv('HYPERHARNESS_EXECUTOR_CREDENTIALS', str(credential_path))
     snapshot = tmp_path / 'source_snapshot/src/ohpu/benchmarks'
     snapshot.mkdir(parents=True)
     plan = {'executor_model': 'Qwen3.5-9B', 'input_tokens': 32768, 'output_tokens': 512,
@@ -116,6 +118,8 @@ def test_luna_installation_patches_owned_client_only(tmp_path, dataset, model):
     assert plan['executor_model'] == (model or 'gpt-5.6-luna')
     assert plan['executor_url'] == ('provider-configured' if model else 'azure-configured')
     assert ('credential_file' in plan['executor_experiment']) == (model is None)
+    if model is None:
+        assert plan['executor_experiment']['credential_file'] == str(credential_path)
     assert (plan['input_tokens'], plan['output_tokens'], plan['seed']) == (32768, 512, 17)
     assert plan['judge_model'] == 'gpt-5.5' and plan['optimizer_model'] == 'gpt-6-sol'
     assert plan['score_workers'] == 2
