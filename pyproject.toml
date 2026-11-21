@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ohpu"
+version = "0.1.0"
+description = "HyperHarness: personalized executable harness adaptation"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "openai>=1.0",
+  "httpx>=0.27,<1",
+  "pyyaml>=6.0",
+  "jsonschema>=4.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10"]
+eval = ["sentence-transformers>=3,<6"]
+luna = ["tiktoken>=0.8,<1"]
+memorycd = [
+  "duckdb>=1.4,<2",
+  "numpy>=1.26,<3",
+  "transformers>=4.51,<6",
+  "rouge-score==0.1.2",
+  "nltk>=3.9,<4",
+  "llguidance==1.7.6",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"ohpu.experiments" = ["skills/history-to-harness/SKILL.md"]
+"ohpu.per_user_adaptation" = [
+  "configs/harness_codex/AGENTS.override.md",
+  "configs/harness_codex/policy.json",
+  "configs/harness_codex/.memoharness/memory.md",
+  "configs/harness_codex/.memoharness/playbook.md",
+]

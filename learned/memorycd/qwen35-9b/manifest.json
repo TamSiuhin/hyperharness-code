@@ -1,0 +1,12 @@
+{
+  "dataset": "memorycd",
+  "executor": "Qwen3.5-9B",
+  "selected_round": 6,
+  "parent_round": 0,
+  "spec_sha256": "69c7a0223f570993470f3c54a0a4f24c692bbbff7b342578ef3b052a358ae970",
+  "initial_spec_sha256": "f9195ab591e738334519a311e90f587a36ed7189af78d475aa00c60d710b8a52",
+  "changed_from_initial": [
+    "backbone.py"
+  ],
+  "selection": "Highest TRAIN mean gain under the paper selection rule, frozen before TEST."
+}

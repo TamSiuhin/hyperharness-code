@@ -1,0 +1,5 @@
+{
+  "llm_calls": 10,
+  "checks": 10,
+  "completion_tokens": 200000
+}

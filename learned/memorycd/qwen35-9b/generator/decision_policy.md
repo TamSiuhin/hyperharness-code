@@ -1,0 +1,2 @@
+## Runtime tools
+Only local memory retrieval and the final answer model are available. There is no decision model or decision relay. decide/rank and intermediate model calls are forbidden; their budgets are zero and cannot be enabled by generated code or generation policy.

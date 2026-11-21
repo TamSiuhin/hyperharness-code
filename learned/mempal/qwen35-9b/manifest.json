@@ -1,0 +1,14 @@
+{
+  "dataset": "mempal",
+  "executor": "Qwen3.5-9B",
+  "selected_round": 1,
+  "parent_round": 0,
+  "spec_sha256": "50be8b2c8aa42ee9b55065207cafc885516b278c95298f2a3e58622599b58a39",
+  "initial_spec_sha256": "f88a0ab8e9800a1c23c9ac79f6690afd653bcf1995511e69b5831af62b7547d9",
+  "changed_from_initial": [
+    "backbone.py",
+    "history_adapter.py",
+    "prompt.md"
+  ],
+  "selection": "Highest TRAIN mean gain under the paper selection rule, frozen before TEST."
+}

@@ -1,0 +1,15 @@
+{
+  "dataset": "pm3",
+  "executor": "Qwen3.5-9B",
+  "selected_round": 9,
+  "parent_round": 8,
+  "spec_sha256": "0cf46908a8776c8b5a90da01f91cc6b132f75e850626aa6a0e9473e6e807f2cc",
+  "initial_spec_sha256": "48a6ab4c8c5674924e7c87c99dfbafcf9a1f03219f3e67d09d7eb1e2aa9d464f",
+  "changed_from_initial": [
+    "backbone.py",
+    "generation_policy.json",
+    "generator.py",
+    "prompt.md"
+  ],
+  "selection": "Highest TRAIN mean gain under the paper selection rule, frozen before TEST."
+}

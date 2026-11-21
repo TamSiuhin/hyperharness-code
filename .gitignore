@@ -1,0 +1,50 @@
+# macOS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Python (testbed / replay infra)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+*.egg-info/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.pyright/
+.hypothesis/
+build/
+
+# Node (pi extension)
+node_modules/
+dist/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+*.key
+
+# Experiment outputs — version the code and configs, not the runs
+runs/
+outputs/
+results/
+wandb/
+*.log
+
+# Downloaded corpora and derived local profiles (see scripts/fetch_data.sh)
+data/raw/
+data/interim/
+sessions/
+.codex-api*/
+
+# 实验中间产物
+tmp/

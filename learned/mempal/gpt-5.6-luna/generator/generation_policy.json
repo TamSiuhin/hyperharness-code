@@ -1,0 +1,9 @@
+{
+  "llm_calls": 4,
+  "checks": 4,
+  "max_tokens": 12000,
+  "completion_tokens": 48000,
+  "prompt_chars": 140000,
+  "history_calls": 0,
+  "history_chars": 0
+}

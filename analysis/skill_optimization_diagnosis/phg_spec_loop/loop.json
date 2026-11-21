@@ -1,0 +1,13 @@
+{
+  "variant": "loop_history",
+  "history_tools": true,
+  "digest_chars": 40000,
+  "section_chars": 14000,
+  "max_tokens": 16000,
+  "effort": "low",
+  "result_chars": 8000,
+  "write_by_step": 8,
+  "force_write_remaining": 3,
+  "ledger_shown": 40,
+  "ledger_per_step": 8
+}

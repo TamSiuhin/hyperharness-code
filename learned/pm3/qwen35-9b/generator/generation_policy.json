@@ -1,0 +1,6 @@
+{
+  "llm_calls": 7,
+  "checks": 7,
+  "max_tokens": 16000,
+  "completion_tokens": 100000
+}

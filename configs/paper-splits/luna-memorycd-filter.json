@@ -1,0 +1,22 @@
+{
+  "protocol": "memorycd-skip-filtered-common-samples-v2",
+  "users": {
+    "AFJ6J5LH2ZHMUBNKZ2ZBCHMIBE5Q": [
+      "AFJ6J5LH2ZHMUBNKZ2ZBCHMIBE5Q:2:rating_prediction"
+    ],
+    "AGZMKHWSCB3UXDGFUPFRZSL4EAWQ": [
+      "AGZMKHWSCB3UXDGFUPFRZSL4EAWQ:1:review_generation"
+    ],
+    "AHESV6RGLB5OFQDEHL6MNYZTYJLQ": [
+      "AHESV6RGLB5OFQDEHL6MNYZTYJLQ:0:review_generation",
+      "AHESV6RGLB5OFQDEHL6MNYZTYJLQ:1:review_generation",
+      "AHESV6RGLB5OFQDEHL6MNYZTYJLQ:2:review_generation"
+    ],
+    "AHOHXQZCEU3KDM3TPKZRNCJ3ITVA_2_1": [
+      "AHOHXQZCEU3KDM3TPKZRNCJ3ITVA_2_1:1:item_ranking"
+    ],
+    "AHOPIRCHOAYQIEMBTRVRU3PZPT6Q": [
+      "AHOPIRCHOAYQIEMBTRVRU3PZPT6Q:1:review_summarization"
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "dataset": "mempal",
+  "executor": "GPT-5.6-Luna",
+  "selected_round": 10,
+  "parent_round": 2,
+  "spec_sha256": "b79ef651273003950f51f319a3743d8678e1bd8865cd0b9e3ea5b08866328230",
+  "initial_spec_sha256": "f88a0ab8e9800a1c23c9ac79f6690afd653bcf1995511e69b5831af62b7547d9",
+  "changed_from_initial": [
+    "backbone.py",
+    "generation_policy.json",
+    "generator.py",
+    "history_adapter.py",
+    "prompt.md"
+  ],
+  "selection": "Highest TRAIN mean gain under the paper selection rule, frozen before TEST."
+}

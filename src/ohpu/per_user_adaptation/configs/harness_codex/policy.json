@@ -1,0 +1,100 @@
+{
+  "bundle_version": 1,
+  "config": {
+    "D1": {
+      "structured_instruction": true,
+      "compression": "light",
+      "strategy": "Extract the verifier contract before edits: required files/paths, exact output format/order, numeric bounds, and stdout/text predicates."
+    },
+    "D2": {
+      "tool_access": "bash",
+      "retrieval_mode": "repo_local",
+      "top_k": 4,
+      "tool_protocol": "native",
+      "strategy": "First response includes a real tool call. Before first edit: inspect likely solution file, inspect one failing verifier/test clue, run one minimal reproducer. Keep reads path-scoped and <=200 lines."
+    },
+    "D3": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "top_p": 1.0,
+      "candidate_count": 1,
+      "codex_model": "gpt-5.4",
+      "reasoning_effort": "high",
+      "reasoning_summary": "none"
+    },
+    "D4": {
+      "workflow": "agentic_loop",
+      "stop_rule": "repo_checks_pass",
+      "strategy": "Contract->reproduce->edit->proof. Capture exact failing signature first. If one signature repeats twice, pivot hypothesis class. For repeated process/runtime signatures, freeze logic edits and patch runner/entrypoint/args/env/build-target first, then require one bounded smoke exit 0 before returning to logic edits."
+    },
+    "D5": {
+      "memory_policy": "summary_buffer",
+      "history_keep": 6,
+      "strategy": "Keep memory to recurring verifier signatures plus one proven guardrail per failure class. Drop duplicates, stale speculation, and disproved hypotheses after two unchanged signatures."
+    },
+    "D6": {
+      "postprocess": "final_message",
+      "validator": "repo_checks",
+      "fallback": "last_observation",
+      "strategy": "After each output-affecting edit and before final response, run the exact failing producer/test command, assert required outputs with test -s, and run one predicate-level format/content/stdout probe tied to the failing assertion. Block completion if any check fails."
+    }
+  },
+  "runtime_files": {
+    "agents": "AGENTS.override.md",
+    "policy": "policy.json",
+    "memory": ".memoharness/memory.md",
+    "playbook": ".memoharness/playbook.md"
+  },
+  "codex": {
+    "model": "gpt-5.4",
+    "reasoning_effort": "high",
+    "reasoning_summary": "none"
+  },
+  "updated_iteration": 16,
+  "distilled_patterns": [
+    {
+      "pattern_id": "iter16-d6-artifact-gate",
+      "primary_dim": "D6",
+      "description": "Missing or malformed output artifacts remain the dominant live failure mode.",
+      "effect": "Use a hard artifact gate per output-affecting edit: exact failing command + required file existence/non-empty checks + one failing-predicate probe before further edits or finalization.",
+      "evidence": [
+        "dna-assembly",
+        "dna-insert",
+        "video-processing",
+        "model-extraction-relu-logits"
+      ],
+      "iteration_range": [
+        12,
+        16
+      ]
+    },
+    {
+      "pattern_id": "iter16-d4-runtime-repeat",
+      "primary_dim": "D4",
+      "description": "Repeated process/runtime signatures plateau when logic edits start before runner wiring is healthy.",
+      "effect": "After two identical process/runtime signatures, patch only runner/entrypoint/args/env/build-target and require one bounded smoke exit 0 before algorithm edits.",
+      "evidence": [
+        "torch-pipeline-parallelism",
+        "torch-tensor-parallelism"
+      ],
+      "iteration_range": [
+        12,
+        16
+      ]
+    },
+    {
+      "pattern_id": "iter16-d4-final-test-pivot",
+      "primary_dim": "D4",
+      "description": "One-test-left plateaus need forced hypothesis pivots when the same signature repeats.",
+      "effect": "If one failing test repeats twice, rotate hypothesis class (contract/path, runtime/env, algorithm/perf) and rerun only that failing test to confirm delta before broad checks.",
+      "evidence": [
+        "adaptive-rejection-sampler",
+        "query-optimize"
+      ],
+      "iteration_range": [
+        12,
+        16
+      ]
+    }
+  ]
+}

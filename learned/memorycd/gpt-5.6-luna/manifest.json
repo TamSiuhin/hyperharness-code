@@ -1,0 +1,13 @@
+{
+  "dataset": "memorycd",
+  "executor": "GPT-5.6-Luna",
+  "selected_round": 5,
+  "parent_round": 0,
+  "spec_sha256": "e85b7911de0035a3cc0d6ed662ae95c70898c8aa99e68119f03331632ce58452",
+  "initial_spec_sha256": "007721179285d2af147358d1f21ca43dd68a8fd4c4ebe3f4ddc3b8ab8ce81652",
+  "changed_from_initial": [
+    "history_adapter.py",
+    "prompt.md"
+  ],
+  "selection": "Highest TRAIN mean gain under the paper selection rule, frozen before TEST."
+}

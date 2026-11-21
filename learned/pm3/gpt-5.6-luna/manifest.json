@@ -1,0 +1,14 @@
+{
+  "dataset": "pm3",
+  "executor": "GPT-5.6-Luna",
+  "selected_round": 5,
+  "parent_round": 4,
+  "spec_sha256": "004fde7155965a224c720e188b9fa5bf4d72eba7b5f80125ed95c56cfc6a0fb4",
+  "initial_spec_sha256": "e613446d5ec5db308173048fc5a7d61520290774d27fd15dbf0aa2c8e872e4f3",
+  "changed_from_initial": [
+    "backbone.py",
+    "control_program.py",
+    "prompt.md"
+  ],
+  "selection": "Highest TRAIN mean gain under the paper selection rule, frozen before TEST."
+}
